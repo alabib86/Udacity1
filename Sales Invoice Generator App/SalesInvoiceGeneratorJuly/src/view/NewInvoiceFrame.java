@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -22,65 +23,49 @@ public class NewInvoiceFrame extends JDialog {
 
     private JLabel invNumlbl;
     public JLabel invNumtxt;
+    private JLabel cusNamelbl;
+    public JTextField cusNametxt;
+
+    private JLabel datelbl;
+    public JTextField datetxt;
 
     private JButton createInvbtn;
-    private JButton addLinesbtn;
-
-    private JPanel pnl1;
-    private JPanel pnl2;
-
-    public JTable tbl;
-    public JTable tbl2;
-
-
+    private JButton cancelInvbtn;
 
     public NewInvoiceFrame(MainFrame frame) {
+
+
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setLayout(new GridLayout(1, 2));
+        setLayout(new GridLayout(4, 2));
 
-        invNumlbl = new JLabel("Invoice ID :");
+        invNumlbl = new JLabel("  Invoice Number :");
         invNumtxt = new JLabel();
+        datelbl = new JLabel("  Date :");
+        cusNamelbl = new JLabel("  Customer Name :");
 
-        pnl1 = new JPanel();
-        pnl2 = new JPanel();
+        datetxt = new JTextField(20);
+        cusNametxt = new JTextField(20);
 
-        tbl = new JTable();
-        tbl.setModel(new DefaultTableModel(
-                new Object[][]{null},
-                new String[]{
-                    "Date", "Cutomer"
-                }
-        ));
-        tbl2 = new JTable();
-        tbl2.setModel(new DefaultTableModel(
-                new Object[][]{null},
-                new String[]{
-                    "Item Name", "Item Price", "Count"
-                }
-        ));
-
-        createInvbtn = new JButton("Create Invoice");
-        addLinesbtn = new JButton("Add Line");
+        createInvbtn = new JButton("Create Header");
+        cancelInvbtn = new JButton("Cancel Header");
 
         createInvbtn.addActionListener(frame.getMyListner());
-        addLinesbtn.addActionListener(frame.getMyListner());
-        createInvbtn.setActionCommand("Create");
-        addLinesbtn.setActionCommand("Add");
+        cancelInvbtn.addActionListener(frame.getMyListner());
+        createInvbtn.setActionCommand("Create Header");
+        cancelInvbtn.setActionCommand("Cancel Header");
 
-        add(pnl1);
-        add(pnl2);
-
-        pnl1.add(invNumlbl);
-        pnl1.add(invNumtxt);
-        pnl1.add(new JScrollPane(tbl));
-        pnl1.add(createInvbtn);
-
-        pnl2.add(new JScrollPane(tbl2));
-        pnl2.add(addLinesbtn);
+        add(invNumlbl);
+        add(invNumtxt);
+        add(datelbl);
+        add(datetxt);
+        add(cusNamelbl);
+        add(cusNametxt);
+        add(createInvbtn);
+        add(cancelInvbtn);
 
         setModal(true);
         setLocation(200, 100);
-        setSize(1000, 700);
+        pack();
     }
 
 }
