@@ -21,8 +21,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.table.DefaultTableModel;
 import model.InvoiceModel;
 import model.InvoiceTableModel;
 import model.LineModel;
@@ -50,6 +48,7 @@ public class InvoiceListener implements ActionListener, ListSelectionListener {
                 break;
             case "Save File":
                 saveFile(null, null);
+                saveFile("InvoiceHeader", "InvoiceLine");
                 break;
             case "New":
                 newInvoice();
@@ -109,6 +108,8 @@ public class InvoiceListener implements ActionListener, ListSelectionListener {
 
     public void loadFile(String headerPath, String linePath) {
 
+        frame.getInvoices().clear();
+        
         File headerFile = null;
         File lineFile = null;
         if (headerPath == null) {
@@ -182,14 +183,13 @@ public class InvoiceListener implements ActionListener, ListSelectionListener {
 
     }
 
-    private void saveFile(String headerPath, String linePath) {
-
+    private void saveFile(String headerPath, String linePath) { 
+        
         File headerFile = null;
         File lineFile = null;
 
         if (headerPath == null && linePath == null) {
             JFileChooser fileChooser = new JFileChooser();
-//            fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             JOptionPane.showMessageDialog(frame, "Choose Path of First File", "Erorr Message", JOptionPane.PLAIN_MESSAGE);
             fileChooser.setSelectedFile(new File("InvoiceHeader"));
             int x = fileChooser.showSaveDialog(frame);
@@ -217,9 +217,11 @@ public class InvoiceListener implements ActionListener, ListSelectionListener {
 
                     FileWriter fwHeader = new FileWriter(Paths.get(headerFile.getAbsolutePath()) + ".csv");
                     BufferedWriter bwHeader = new BufferedWriter(fwHeader);
+
                     for (int i = 0; i < frame.getInvoices().size(); i++) {
+
                         bwHeader.write(frame.getInvoices().get(i).getInvoiceNum() + ",");
-                        bwHeader.write(frame.getInvoices().get(i).getDate() + ",");
+                        bwHeader.write(MainFrame.dFormat.format(frame.getInvoices().get(i).getDate()) + ",");
                         bwHeader.write(frame.getInvoices().get(i).getCustomerName());
                         bwHeader.newLine();
                     }
@@ -242,7 +244,9 @@ public class InvoiceListener implements ActionListener, ListSelectionListener {
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(frame, "Wrong File Format", "Erorr Message", JOptionPane.ERROR_MESSAGE);
                 }
-            }else{JOptionPane.showMessageDialog(frame, "Please Don't Change Files Names or Format", "Erorr Message", JOptionPane.ERROR_MESSAGE);}
+            } else {
+                JOptionPane.showMessageDialog(frame, "Please Don't Change Files Names or Format", "Erorr Message", JOptionPane.ERROR_MESSAGE);
+            }
         }
 
     }
