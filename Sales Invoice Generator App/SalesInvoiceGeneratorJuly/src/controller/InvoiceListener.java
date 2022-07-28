@@ -48,7 +48,7 @@ public class InvoiceListener implements ActionListener, ListSelectionListener {
                 break;
             case "Save File":
                 saveFile(null, null);
-                saveFile("InvoiceHeader", "InvoiceLine");
+                saveFile("InvoiceHeader.csv", "InvoiceLine.csv");
                 break;
             case "New":
                 newInvoice();
@@ -191,12 +191,12 @@ public class InvoiceListener implements ActionListener, ListSelectionListener {
         if (headerPath == null && linePath == null) {
             JFileChooser fileChooser = new JFileChooser();
             JOptionPane.showMessageDialog(frame, "Choose Path of First File", "Erorr Message", JOptionPane.PLAIN_MESSAGE);
-            fileChooser.setSelectedFile(new File("InvoiceHeader"));
+            fileChooser.setSelectedFile(new File("InvoiceHeader.csv"));
             int x = fileChooser.showSaveDialog(frame);
             if (x == JFileChooser.APPROVE_OPTION) {
                 headerFile = fileChooser.getSelectedFile();
                 JOptionPane.showMessageDialog(frame, "Choose Path of Second File", "Erorr Message", JOptionPane.PLAIN_MESSAGE);
-                fileChooser.setSelectedFile(new File("InvoiceLine"));
+                fileChooser.setSelectedFile(new File("InvoiceLine.csv"));
                 x = fileChooser.showSaveDialog(frame);
                 if (x == JFileChooser.APPROVE_OPTION) {
                     lineFile = fileChooser.getSelectedFile();
@@ -212,10 +212,10 @@ public class InvoiceListener implements ActionListener, ListSelectionListener {
             lineFile = new File(linePath);
         }
         if (headerFile != null && lineFile != null) {
-            if (headerFile.getName().equals("InvoiceHeader") && lineFile.getName().equals("InvoiceLine")) {
+            if (headerFile.getName().equals("InvoiceHeader.csv") && lineFile.getName().equals("InvoiceLine.csv")) {
                 try {
 
-                    FileWriter fwHeader = new FileWriter(Paths.get(headerFile.getAbsolutePath()) + ".csv");
+                    FileWriter fwHeader = new FileWriter(headerFile);
                     BufferedWriter bwHeader = new BufferedWriter(fwHeader);
 
                     for (int i = 0; i < frame.getInvoices().size(); i++) {
@@ -227,7 +227,7 @@ public class InvoiceListener implements ActionListener, ListSelectionListener {
                     }
                     bwHeader.close();
                     fwHeader.close();
-                    FileWriter fwLine = new FileWriter(Paths.get(lineFile.getAbsolutePath()) + ".csv");
+                    FileWriter fwLine = new FileWriter(lineFile);
                     BufferedWriter bwLine = new BufferedWriter(fwLine);
                     for (int i = 0; i < frame.getInvoices().size(); i++) {
                         for (int j = 0; j < frame.getInvoices().get(i).getLines().size(); j++) {
