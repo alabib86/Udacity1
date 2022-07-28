@@ -3,6 +3,7 @@ package model;
 
 import java.util.ArrayList;
 import java.util.Date;
+import view.MainFrame;
 
 
 public class InvoiceModel {
@@ -59,7 +60,9 @@ public class InvoiceModel {
         }
         return total;
     }
-    
+    public String toCSV(){
+        return invoiceNum+","+MainFrame.dFormat.format(date)+","+customerName;
+    }
 }
 
 

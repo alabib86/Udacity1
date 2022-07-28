@@ -47,8 +47,7 @@ public class InvoiceListener implements ActionListener, ListSelectionListener {
                 loadFile(null, null);
                 break;
             case "Save File":
-                saveFile(null, null);
-                saveFile("InvoiceHeader.csv", "InvoiceLine.csv");
+                saveFile();
                 break;
             case "New":
                 newInvoice();
@@ -109,7 +108,7 @@ public class InvoiceListener implements ActionListener, ListSelectionListener {
     public void loadFile(String headerPath, String linePath) {
 
         frame.getInvoices().clear();
-        
+
         File headerFile = null;
         File lineFile = null;
         if (headerPath == null) {
@@ -183,70 +182,110 @@ public class InvoiceListener implements ActionListener, ListSelectionListener {
 
     }
 
-    private void saveFile(String headerPath, String linePath) { 
-        
+    private void saveFile() {
         File headerFile = null;
         File lineFile = null;
 
-        if (headerPath == null && linePath == null) {
-            JFileChooser fileChooser = new JFileChooser();
-            JOptionPane.showMessageDialog(frame, "Choose Path of First File", "Erorr Message", JOptionPane.PLAIN_MESSAGE);
-            fileChooser.setSelectedFile(new File("InvoiceHeader.csv"));
-            int x = fileChooser.showSaveDialog(frame);
-            if (x == JFileChooser.APPROVE_OPTION) {
-                headerFile = fileChooser.getSelectedFile();
-                JOptionPane.showMessageDialog(frame, "Choose Path of Second File", "Erorr Message", JOptionPane.PLAIN_MESSAGE);
-                fileChooser.setSelectedFile(new File("InvoiceLine.csv"));
-                x = fileChooser.showSaveDialog(frame);
-                if (x == JFileChooser.APPROVE_OPTION) {
-                    lineFile = fileChooser.getSelectedFile();
+        //        if (headerPath == null && linePath == null) {
+        //            JFileChooser fileChooser = new JFileChooser();
+        //            JOptionPane.showMessageDialog(frame, "Choose Path of First File", "Erorr Message", JOptionPane.PLAIN_MESSAGE);
+        //            fileChooser.setSelectedFile(new File("InvoiceHeader.csv"));
+        //            int x = fileChooser.showSaveDialog(frame);
+        //            if (x == JFileChooser.APPROVE_OPTION) {
+        //                headerFile = fileChooser.getSelectedFile();
+        //                JOptionPane.showMessageDialog(frame, "Choose Path of Second File", "Erorr Message", JOptionPane.PLAIN_MESSAGE);
+        //                fileChooser.setSelectedFile(new File("InvoiceLine.csv"));
+        //                x = fileChooser.showSaveDialog(frame);
+        //                if (x == JFileChooser.APPROVE_OPTION) {
+        //                    lineFile = fileChooser.getSelectedFile();
+        //
+        //                } else {
+        //                    JOptionPane.showMessageDialog(frame, "File Not Found Please Try Again", "Erorr Message", JOptionPane.ERROR_MESSAGE);
+        //                }
+        //            } else {
+        //                JOptionPane.showMessageDialog(frame, "File Not Found Please Try Again", "Erorr Message", JOptionPane.ERROR_MESSAGE);
+        //            }
+        //        } else {
+        //            headerFile = new File(headerPath);
+        //            lineFile = new File(linePath);
+        //        }
+        //        if (headerFile != null && lineFile != null) {
+        ////            if (headerFile.getName().equals("InvoiceHeader.csv") && lineFile.getName().equals("InvoiceLine.csv")) {
+        //            if (getExtension(headerFile).equals("csv") && getExtension(lineFile).equals("csv")) {
+        //                try {
+        //
+        //                    FileWriter fwHeader = new FileWriter(headerFile);
+        //                    BufferedWriter bwHeader = new BufferedWriter(fwHeader);
+        //
+        //                    for (int i = 0; i < frame.getInvoices().size(); i++) {
+        //
+        //                        bwHeader.write(frame.getInvoices().get(i).getInvoiceNum() + ",");
+        //                        bwHeader.write(MainFrame.dFormat.format(frame.getInvoices().get(i).getDate()) + ",");
+        //                        bwHeader.write(frame.getInvoices().get(i).getCustomerName());
+        //                        bwHeader.newLine();
+        //                    }
+        //                    bwHeader.close();
+        //                    fwHeader.close();
+        //                    FileWriter fwLine = new FileWriter(lineFile);
+        //                    BufferedWriter bwLine = new BufferedWriter(fwLine);
+        //                    for (int i = 0; i < frame.getInvoices().size(); i++) {
+        //                        for (int j = 0; j < frame.getInvoices().get(i).getLines().size(); j++) {
+        //                            bwLine.write(frame.getInvoices().get(i).getInvoiceNum() + ",");
+        //                            bwLine.write(frame.getInvoices().get(i).getLines().get(j).getItem() + ",");
+        //                            bwLine.write(frame.getInvoices().get(i).getLines().get(j).getPrice() + ",");
+        //                            bwLine.write(frame.getInvoices().get(i).getLines().get(j).getCount() + "");
+        //                            bwLine.newLine();
+        //
+        //                        }
+        //                    }
+        //                    bwLine.close();
+        //                    fwLine.close();
+        //                } catch (IOException ex) {
+        //                    JOptionPane.showMessageDialog(frame, "Wrong File Format", "Erorr Message", JOptionPane.ERROR_MESSAGE);
+        //                }
+        //            } else {
+        //                JOptionPane.showMessageDialog(frame, "Please Don't Change Files Names or Format", "Erorr Message", JOptionPane.ERROR_MESSAGE);
+        //            }
+        //        }
+        String invoicesData = "";
+        String linesData = "";
 
+        for (InvoiceModel invoices : frame.getInvoices()) {
+            invoicesData += invoices.toCSV();
+            invoicesData += "\n";
+            for (LineModel line : invoices.getLines()) {
+                linesData += line.toCSV();
+                linesData += "\n";
+            }
+        }
+        JFileChooser fileChooser = new JFileChooser();
+        int x = fileChooser.showSaveDialog(frame);
+        if (x == JFileChooser.APPROVE_OPTION) {
+            headerFile = fileChooser.getSelectedFile();
+            x = fileChooser.showSaveDialog(frame);
+            if (x == JFileChooser.APPROVE_OPTION) {
+                lineFile = fileChooser.getSelectedFile();
+                if (getExtension(headerFile).equals("csv") && getExtension(lineFile).equals("csv")) {
+                    try {
+                        FileWriter fwHeader = new FileWriter(headerFile);
+                        fwHeader.write(invoicesData);
+                        fwHeader.flush();
+                        fwHeader.close();
+                        FileWriter fwLine = new FileWriter(lineFile);
+                        fwLine.write(linesData);
+                        fwLine.flush();
+                        fwLine.close();
+                    } catch (IOException e) {
+                        JOptionPane.showMessageDialog(frame, "Error while saving", "Erorr Message", JOptionPane.ERROR_MESSAGE);
+                    }
                 } else {
-                    JOptionPane.showMessageDialog(frame, "File Not Found Please Try Again", "Erorr Message", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(frame, "Please Make Sure Files Format .CSV", "Erorr Message", JOptionPane.ERROR_MESSAGE);
                 }
             } else {
                 JOptionPane.showMessageDialog(frame, "File Not Found Please Try Again", "Erorr Message", JOptionPane.ERROR_MESSAGE);
             }
         } else {
-            headerFile = new File(headerPath);
-            lineFile = new File(linePath);
-        }
-        if (headerFile != null && lineFile != null) {
-            if (headerFile.getName().equals("InvoiceHeader.csv") && lineFile.getName().equals("InvoiceLine.csv")) {
-                try {
-
-                    FileWriter fwHeader = new FileWriter(headerFile);
-                    BufferedWriter bwHeader = new BufferedWriter(fwHeader);
-
-                    for (int i = 0; i < frame.getInvoices().size(); i++) {
-
-                        bwHeader.write(frame.getInvoices().get(i).getInvoiceNum() + ",");
-                        bwHeader.write(MainFrame.dFormat.format(frame.getInvoices().get(i).getDate()) + ",");
-                        bwHeader.write(frame.getInvoices().get(i).getCustomerName());
-                        bwHeader.newLine();
-                    }
-                    bwHeader.close();
-                    fwHeader.close();
-                    FileWriter fwLine = new FileWriter(lineFile);
-                    BufferedWriter bwLine = new BufferedWriter(fwLine);
-                    for (int i = 0; i < frame.getInvoices().size(); i++) {
-                        for (int j = 0; j < frame.getInvoices().get(i).getLines().size(); j++) {
-                            bwLine.write(frame.getInvoices().get(i).getInvoiceNum() + ",");
-                            bwLine.write(frame.getInvoices().get(i).getLines().get(j).getItem() + ",");
-                            bwLine.write(frame.getInvoices().get(i).getLines().get(j).getPrice() + ",");
-                            bwLine.write(frame.getInvoices().get(i).getLines().get(j).getCount() + "");
-                            bwLine.newLine();
-
-                        }
-                    }
-                    bwLine.close();
-                    fwLine.close();
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(frame, "Wrong File Format", "Erorr Message", JOptionPane.ERROR_MESSAGE);
-                }
-            } else {
-                JOptionPane.showMessageDialog(frame, "Please Don't Change Files Names or Format", "Erorr Message", JOptionPane.ERROR_MESSAGE);
-            }
+            JOptionPane.showMessageDialog(frame, "File Not Found Please Try Again", "Erorr Message", JOptionPane.ERROR_MESSAGE);
         }
 
     }

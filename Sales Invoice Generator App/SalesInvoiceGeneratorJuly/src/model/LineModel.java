@@ -50,4 +50,7 @@ public class LineModel {
     public double getTotalLine() {
         return getCount() * getPrice();
     }
+    public String toCSV(){
+        return invoice.getInvoiceNum()+","+item+","+price+","+count;
+    }
 }
